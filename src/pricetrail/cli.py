@@ -1,15 +1,17 @@
-"""Command line entry point: `pricetrail migrate | seed | collect | status`."""
+"""Command line entry point: `pricetrail migrate | seed | collect | notify | status`."""
 
 from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 
 from pricetrail import db
 from pricetrail.catalog import load_catalog, seed
 from pricetrail.collect import collect
 from pricetrail.http import Client
+from pricetrail.notify import notify
 from pricetrail.sources import build_sources
 
 
@@ -20,6 +22,7 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("seed", help="upsert catalog.toml into the database")
     run = sub.add_parser("collect", help="collect prices from every enabled source")
     run.add_argument("--source", action="append", help="limit to this source id (repeatable)")
+    sub.add_parser("notify", help="email confirmed alerts whose target price was reached")
     sub.add_parser("status", help="print the latest run of each source")
     args = parser.parse_args(argv)
 
@@ -42,6 +45,9 @@ def main(argv: list[str] | None = None) -> int:
                 line = f"{r.source_id:<14} {r.status:<8} {r.offers_ok}/{r.offers_total}"
                 print(line + (f"  {r.error}" if r.error else ""))
             return 0 if all(r.status == "ok" for r in results) else 1
+        elif args.command == "notify":
+            site_url = os.environ.get("SITE_URL", "http://localhost:3001").rstrip("/")
+            print(f"sent {notify(conn, site_url)} alert emails")
         elif args.command == "status":
             with conn.cursor() as cur:
                 cur.execute(
