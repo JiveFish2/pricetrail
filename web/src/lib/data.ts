@@ -24,6 +24,7 @@ export type ProductSummary = {
   slug: string;
   name: string;
   category: string;
+  imageUrl: string | null;
   offers: OfferSummary[];
 };
 
@@ -64,6 +65,12 @@ type OfferRow = {
   low30: string | null;
   high30: string | null;
 };
+
+type ProductRow = { id: number; slug: string; name: string; category: string; image_url: string | null };
+
+function toProduct(row: ProductRow) {
+  return { id: row.id, slug: row.slug, name: row.name, category: row.category, imageUrl: row.image_url };
+}
 
 // Latest price point per offer plus the 30-day range, for one or all products.
 async function offerRows(productId?: number): Promise<OfferRow[]> {
@@ -113,12 +120,12 @@ export async function listProducts(): Promise<ProductSummary[]> {
   cacheLife("hours");
   cacheTag("prices");
 
-  const products = await sql<{ id: number; slug: string; name: string; category: string }[]>`
-    select id, slug, name, category from products order by category, name
+  const products = await sql<ProductRow[]>`
+    select id, slug, name, category, image_url from products order by category, name
   `;
   const offers = await offerRows();
   return products.map((product) => ({
-    ...product,
+    ...toProduct(product),
     offers: offers.filter((row) => row.product_id === product.id).map(toOffer),
   }));
 }
@@ -128,8 +135,8 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
   cacheLife("hours");
   cacheTag("prices");
 
-  const [product] = await sql<{ id: number; slug: string; name: string; category: string }[]>`
-    select id, slug, name, category from products where slug = ${slug}
+  const [product] = await sql<ProductRow[]>`
+    select id, slug, name, category, image_url from products where slug = ${slug}
   `;
   if (!product) return null;
 
@@ -149,7 +156,7 @@ export async function getProduct(slug: string): Promise<ProductDetail | null> {
   for (const point of points) {
     history[point.offer_id]?.push({ day: point.day, price: point.price, available: point.available });
   }
-  return { ...product, offers, history };
+  return { ...toProduct(product), offers, history };
 }
 
 export async function listSlugs(): Promise<string[]> {
