@@ -43,6 +43,24 @@ def parse_offers(html: str) -> list[PageOffer]:
     return offers
 
 
+def product_image(html: str) -> str | None:
+    """First product image on the page: JSON-LD `image`, microdata `image`, then og:image."""
+    parser = _Parser()
+    parser.feed(html)
+    for block in parser.json_ld_blocks:
+        try:
+            data = json.loads(block)
+        except json.JSONDecodeError:
+            continue
+        for node in _walk(data):
+            if isinstance(node, dict) and "Product" in _types(node) and node.get("image"):
+                return _absolute(_first(node["image"]))
+    for candidate in parser.images:
+        if candidate:
+            return _absolute(candidate)
+    return None
+
+
 def best_offer(html: str) -> PageOffer | None:
     """The cheapest in-stock offer, or the cheapest one when nothing is in stock."""
     offers = [offer for offer in parse_offers(html) if offer.complete]
@@ -60,9 +78,7 @@ def _offers_from_json_ld(data: Any) -> list[PageOffer]:
     for node in _walk(data):
         if not isinstance(node, dict):
             continue
-        types = node.get("@type")
-        types = types if isinstance(types, list) else [types]
-        if "Product" not in types:
+        if "Product" not in _types(node):
             continue
         offers = node.get("offers")
         offers = offers if isinstance(offers, list) else [offers]
@@ -83,6 +99,25 @@ def _offer_from_dict(offer: dict[str, Any]) -> PageOffer:
         currency=offer.get("priceCurrency"),
         available=_availability(offer.get("availability")),
     )
+
+
+def _types(node: dict[str, Any]) -> list[Any]:
+    types = node.get("@type")
+    return types if isinstance(types, list) else [types]
+
+
+def _first(value: Any) -> str | None:
+    if isinstance(value, list):
+        value = value[0] if value else None
+    if isinstance(value, dict):
+        value = value.get("url") or value.get("contentUrl")
+    return str(value) if value else None
+
+
+def _absolute(url: str | None) -> str | None:
+    if url and url.startswith("//"):
+        return "https:" + url
+    return url
 
 
 def _walk(node: Any):
@@ -111,6 +146,8 @@ class _Parser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.json_ld_blocks: list[str] = []
         self.microdata_offers: list[PageOffer] = []
+        self.images: list[str | None] = []  # microdata images first, og:image last
+        self._og_image: str | None = None
         self._in_json_ld = False
         self._pending_field: str | None = None
 
@@ -120,7 +157,17 @@ class _Parser(HTMLParser):
             self._in_json_ld = True
             self.json_ld_blocks.append("")
             return
+        if attributes.get("property") == "og:image" and self._og_image is None:
+            self._og_image = attributes.get("content")
         field = attributes.get("itemprop")
+        if field == "image":
+            self.images.append(
+                attributes.get("content")
+                or attributes.get("src")
+                or attributes.get("data-src")
+                or attributes.get("href")
+            )
+            return
         if field not in self.FIELDS:
             return
         content = attributes.get("content")
@@ -134,6 +181,8 @@ class _Parser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag == "script":
             self._in_json_ld = False
+        if tag == "html" and self._og_image:
+            self.images.append(self._og_image)
         self._pending_field = None
 
     def handle_data(self, data: str) -> None:

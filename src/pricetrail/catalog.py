@@ -38,7 +38,8 @@ def seed(conn: psycopg.Connection, products: list[dict]) -> tuple[int, int]:
                 "insert into products (slug, name, category, image_url)"
                 " values (%(slug)s, %(name)s, %(category)s, %(image_url)s)"
                 " on conflict (slug) do update set name = excluded.name,"
-                " category = excluded.category, image_url = excluded.image_url"
+                " category = excluded.category,"
+                " image_url = coalesce(products.image_url, excluded.image_url)"
                 " returning id",
                 {"image_url": None, **product},
             )

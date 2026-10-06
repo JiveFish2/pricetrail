@@ -14,9 +14,10 @@ FIXTURES = Path(__file__).parent / "fixtures"
 def test_feed_maps_product_id_to_lowest_variant_price():
     prices = parse_feed((FIXTURES / "shopify_feed.atom").read_text(), currency="USD")
 
-    assert prices["9034781687985"] == Decimal("149.99")
-    assert prices["7488962724017"] == Decimal("0.71")  # several variants, lowest wins
-    assert prices["9071189131441"] == Decimal("29.99")
+    assert prices["9034781687985"][0] == Decimal("149.99")
+    assert prices["7488962724017"][0] == Decimal("0.71")  # several variants, lowest wins
+    assert prices["9071189131441"][0] == Decimal("29.99")
+    assert prices["9034781687985"][1].startswith("https://cdn.shopify.com/")
 
 
 def test_feed_ignores_other_currencies():

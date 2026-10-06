@@ -63,6 +63,11 @@ def collect_source(conn: psycopg.Connection, source: Source) -> RunResult:
             " values (%s, %s, %s, %s, %s)",
             [(o.offer_id, run_id, o.price, o.list_price, o.available) for o in observations],
         )
+        cur.executemany(
+            "update products set image_url = %s"
+            " where image_url is null and id = (select product_id from offers where id = %s)",
+            [(o.image_url, o.offer_id) for o in observations if o.image_url],
+        )
     ok = len(observations)
     status = "ok" if ok == len(offers) else ("partial" if ok else "failed")
     error = None if status == "ok" else f"{len(offers) - ok} of {len(offers)} offers not read"

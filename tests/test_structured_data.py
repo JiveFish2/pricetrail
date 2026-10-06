@@ -1,7 +1,7 @@
 from decimal import Decimal
 from pathlib import Path
 
-from pricetrail.sources.structured_data import best_offer, parse_offers
+from pricetrail.sources.structured_data import best_offer, parse_offers, product_image
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -69,3 +69,28 @@ def test_aggregate_offer_and_price_specification():
 def test_page_without_structured_data():
     assert parse_offers("<html><body><p>$10</p></body></html>") == []
     assert best_offer("<html></html>") is None
+
+
+def test_product_image_from_microdata_resolves_protocol_relative_url():
+    html = (FIXTURES / "fangamer_product.html").read_text()
+    image = product_image(html)
+    assert image is not None
+    assert image.startswith("https://www.fangamer.com/cdn/shop/files/product_HK_knight_plush_main")
+
+
+def test_product_image_from_json_ld_and_og_fallback():
+    html = """
+    <html><head><meta property="og:image" content="https://x.test/og.jpg"></head>
+    <script type="application/ld+json">
+    {"@type": "Product", "image": ["https://x.test/one.jpg", "https://x.test/two.jpg"],
+     "offers": {"price": 1, "priceCurrency": "USD"}}
+    </script></html>
+    """
+    assert product_image(html) == "https://x.test/one.jpg"
+    assert (
+        product_image(
+            '<html><head><meta property="og:image" content="https://x.test/og.jpg"></head></html>'
+        )
+        == "https://x.test/og.jpg"
+    )
+    assert product_image("<html></html>") is None

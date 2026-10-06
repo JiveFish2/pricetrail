@@ -10,6 +10,7 @@ The external id is the numeric product id that ends the entry's `<id>` URL.
 from __future__ import annotations
 
 import logging
+import re
 import xml.etree.ElementTree as ET
 from decimal import Decimal
 
@@ -39,21 +40,25 @@ class AtomFeedSource:
         listed = parse_feed(response.text, currency=self.currency)
         observations: list[Observation] = []
         for offer in offers:
-            price = listed.get(offer.external_id)
-            if price is None:
+            entry = listed.get(offer.external_id)
+            if entry is None:
                 log.warning("%s: product %s not in the feed, skipping", self.id, offer.external_id)
                 continue
-            observations.append(Observation(offer.id, price, None, True))
+            price, image = entry
+            observations.append(Observation(offer.id, price, None, True, image))
         return observations
 
 
-def parse_feed(xml: str, *, currency: str) -> dict[str, Decimal]:
-    """Map product id -> lowest variant price in `currency`.
+IMG_SRC = re.compile(r'<img[^>]+src="([^"]+)"')
+
+
+def parse_feed(xml: str, *, currency: str) -> dict[str, tuple[Decimal, str | None]]:
+    """Map product id -> (lowest variant price in `currency`, first image).
 
     Entries whose variants are all in another currency are left out.
     """
     root = ET.fromstring(xml)
-    prices: dict[str, Decimal] = {}
+    prices: dict[str, tuple[Decimal, str | None]] = {}
     for entry in root.findall("atom:entry", NS):
         id_element = entry.find("atom:id", NS)
         if id_element is None or not id_element.text:
@@ -65,5 +70,7 @@ def parse_feed(xml: str, *, currency: str) -> dict[str, Decimal]:
             if price.text and price.get("currency", currency) == currency
         ]
         if variant_prices:
-            prices[product_id] = min(variant_prices)
+            summary = entry.find("atom:summary", NS)
+            match = IMG_SRC.search(summary.text or "") if summary is not None else None
+            prices[product_id] = (min(variant_prices), match.group(1) if match else None)
     return prices

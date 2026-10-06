@@ -25,6 +25,7 @@ class Observation:
     price: Decimal | None  # None when the product is not for sale right now
     list_price: Decimal | None
     available: bool
+    image_url: str | None = None  # product image, when the source offers one
 
 
 class Source(Protocol):

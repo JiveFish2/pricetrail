@@ -15,6 +15,7 @@ from pricetrail.http import Client
 from pricetrail.sources.base import Observation, Offer
 
 API_URL = "https://store.steampowered.com/api/appdetails"
+IMAGE_URL = "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/{id}/header.jpg"
 BATCH_SIZE = 20
 
 log = logging.getLogger(__name__)
@@ -54,7 +55,11 @@ class SteamSource:
                     log.warning("%s: app %s not found, skipping", self.id, external_id)
                     continue
                 price, list_price, available = parsed
-                observations.append(Observation(offer.id, price, list_price, available))
+                observations.append(
+                    Observation(
+                        offer.id, price, list_price, available, IMAGE_URL.format(id=external_id)
+                    )
+                )
         return observations
 
 

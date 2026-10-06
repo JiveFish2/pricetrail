@@ -14,7 +14,7 @@ import httpx
 
 from pricetrail.http import Client
 from pricetrail.sources.base import Observation, Offer
-from pricetrail.sources.structured_data import best_offer
+from pricetrail.sources.structured_data import best_offer, product_image
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +59,12 @@ class ProductPageSource:
                 continue
             available = found.available is not False
             observations.append(
-                Observation(offer.id, found.price if available else None, None, available)
+                Observation(
+                    offer.id,
+                    found.price if available else None,
+                    None,
+                    available,
+                    product_image(response.text),
+                )
             )
         return observations
