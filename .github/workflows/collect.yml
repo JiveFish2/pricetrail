@@ -17,6 +17,9 @@ jobs:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       ML_CLIENT_ID: ${{ secrets.ML_CLIENT_ID }}
       ML_CLIENT_SECRET: ${{ secrets.ML_CLIENT_SECRET }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      ALERT_FROM: ${{ vars.ALERT_FROM }}
+      SITE_URL: ${{ vars.SITE_URL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,5 +30,13 @@ jobs:
       - run: pricetrail migrate
       - run: pricetrail seed
       - run: pricetrail collect
+      - if: always()
+        run: pricetrail notify
+      # Tell the site to drop its cached pages so the new prices show right away.
+      - if: always() && vars.SITE_URL != ''
+        run: >-
+          curl --fail --silent --show-error -X POST
+          -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}"
+          "${{ vars.SITE_URL }}/api/revalidate"
       - if: always()
         run: pricetrail status
