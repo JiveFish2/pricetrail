@@ -1,0 +1,63 @@
+# Products PriceTrail tracks. `pricetrail seed` upserts this file into the database.
+# Each product lists one offer per source; the key is the source id and the
+# value is the source's own identifier (Steam app id, Mercado Livre item id).
+
+[[products]]
+slug = "elden-ring"
+name = "Elden Ring"
+category = "Games"
+offers = { steam-br = "1245620", steam-us = "1245620" }
+
+[[products]]
+slug = "cyberpunk-2077"
+name = "Cyberpunk 2077"
+category = "Games"
+offers = { steam-br = "1091500", steam-us = "1091500" }
+
+[[products]]
+slug = "baldurs-gate-3"
+name = "Baldur's Gate 3"
+category = "Games"
+offers = { steam-br = "1086940", steam-us = "1086940" }
+
+[[products]]
+slug = "hades-ii"
+name = "Hades II"
+category = "Games"
+offers = { steam-br = "1145350", steam-us = "1145350" }
+
+[[products]]
+slug = "stardew-valley"
+name = "Stardew Valley"
+category = "Games"
+offers = { steam-br = "413150", steam-us = "413150" }
+
+[[products]]
+slug = "hollow-knight-silksong"
+name = "Hollow Knight: Silksong"
+category = "Games"
+offers = { steam-br = "1030300", steam-us = "1030300" }
+
+[[products]]
+slug = "red-dead-redemption-2"
+name = "Red Dead Redemption 2"
+category = "Games"
+offers = { steam-br = "1174180", steam-us = "1174180" }
+
+[[products]]
+slug = "the-witcher-3"
+name = "The Witcher 3: Wild Hunt"
+category = "Games"
+offers = { steam-br = "292030", steam-us = "292030" }
+
+[[products]]
+slug = "black-myth-wukong"
+name = "Black Myth: Wukong"
+category = "Games"
+offers = { steam-br = "2358720", steam-us = "2358720" }
+
+[[products]]
+slug = "sea-of-stars"
+name = "Sea of Stars"
+category = "Games"
+offers = { steam-br = "1244090", steam-us = "1244090" }
