@@ -1,67 +1,93 @@
 @import "tailwindcss";
 
+/* PriceTrail identity: a ledger of prices. Warm paper, dark ink, a serif for
+   headlines, mono for every number, green for drops and rust for rises. */
 @theme inline {
-  --color-bg: #050a15;
-  --color-panel: #0a1322;
-  --color-fg: #e8eefc;
-  --color-mute: #8494b5;
-  --color-line: #16223a;
-  --color-a: #4f8cff;
-  --color-b: #8ec1ff;
-  --color-ok: #5fd39a;
-  --color-warn: #f0b072;
-  --color-bad: #ff6b7a;
-  --font-sans: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, Menlo, Consolas, monospace;
+  --color-paper: #f4f0e6;
+  --color-sheet: #fffdf7;
+  --color-ink: #1b1d1a;
+  --color-ink-2: #5f655d;
+  --color-ink-3: #9a9f95;
+  --color-rule: #ddd6c4;
+  --color-trail: #0f7a53;
+  --color-trail-soft: #d6ecdf;
+  --color-rise: #b8432b;
+  --color-rise-soft: #f3d9d2;
+  --color-amber: #b7791a;
+  --color-amber-soft: #f3e4c4;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, Menlo, Consolas, monospace;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-fg);
+  background: var(--color-paper);
+  color: var(--color-ink);
   font-family: var(--font-sans);
+  /* Faint paper grain */
+  background-image: radial-gradient(rgba(27, 29, 26, 0.045) 0.6px, transparent 0.6px);
+  background-size: 7px 7px;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-b);
+  outline: 2px solid var(--color-trail);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: var(--color-a);
-  color: var(--color-bg);
+  background: var(--color-trail);
+  color: var(--color-sheet);
+}
+
+h1,
+h2.display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
 }
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--color-a);
+  color: var(--color-ink-2);
 }
 
-.card {
-  background: color-mix(in srgb, var(--color-panel) 85%, transparent);
-  border: 1px solid var(--color-line);
-  border-radius: 1rem;
+.sheet {
+  background: var(--color-sheet);
+  border: 1px solid var(--color-rule);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 0 rgba(27, 29, 26, 0.04), 0 10px 24px -20px rgba(27, 29, 26, 0.35);
+}
+
+/* Receipt-style separator */
+.dashed {
+  border-top: 1px dashed var(--color-rule);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .field {
   width: 100%;
-  border-radius: 0.6rem;
-  border: 1px solid var(--color-line);
-  background: color-mix(in srgb, var(--color-panel) 80%, transparent);
-  padding: 0.65rem 0.9rem;
-  color: var(--color-fg);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-rule);
+  background: var(--color-sheet);
+  padding: 0.65rem 0.85rem;
+  color: var(--color-ink);
 }
 .field:focus-visible {
-  outline: 2px solid var(--color-a);
+  outline: 2px solid var(--color-trail);
   outline-offset: 0;
-  border-color: var(--color-a);
+  border-color: var(--color-trail);
 }
 
 .btn {
@@ -70,16 +96,35 @@ body {
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  background: var(--color-a);
-  color: var(--color-bg);
+  background: var(--color-ink);
+  color: var(--color-sheet);
   font-weight: 600;
-  padding: 0.65rem 1.25rem;
-  transition: transform 0.2s, opacity 0.2s;
+  padding: 0.7rem 1.3rem;
+  transition: background 0.2s, transform 0.2s;
 }
 .btn:hover {
+  background: var(--color-trail);
   transform: translateY(-1px);
 }
 .btn:disabled {
   opacity: 0.6;
   transform: none;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.1rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+}
+.tag-drop { background: var(--color-trail-soft); color: var(--color-trail); }
+.tag-rise { background: var(--color-rise-soft); color: var(--color-rise); }
+.tag-amber { background: var(--color-amber-soft); color: var(--color-amber); }
+.tag-ink { background: var(--color-paper); color: var(--color-ink-2); border: 1px solid var(--color-rule); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
 }

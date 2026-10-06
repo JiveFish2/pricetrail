@@ -5,7 +5,7 @@ import { money, shortDate } from "@/lib/format";
 // Offers in different currencies get their own scale, so lines are only
 // comparable within a currency; the legend says which is which.
 
-const COLORS = ["#4f8cff", "#8ec1ff", "#5fd39a", "#f0b072", "#ff6b7a"];
+const COLORS = ["#0f7a53", "#1b1d1a", "#b7791a", "#b8432b", "#3b6ea5"];
 const W = 720;
 const H = 240;
 const PAD = { top: 16, right: 16, bottom: 28, left: 56 };
@@ -27,7 +27,7 @@ export function PriceChart({
   const days = [...new Set(series.flatMap((s) => s.points.map((p) => p.day)))].sort();
   if (days.length < 2) {
     return (
-      <p className="card p-6 text-sm text-mute">
+      <p className="sheet p-6 text-sm text-ink-2">
         The chart appears after two days of data. Collected so far: {days.length} day
         {days.length === 1 ? "" : "s"}.
       </p>
@@ -59,12 +59,12 @@ export function PriceChart({
   const yTicks = [Math.min(...firstValues), Math.max(...firstValues)];
 
   return (
-    <figure className="card p-4 sm:p-6">
+    <figure className="sheet p-4 sm:p-6">
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Price history" className="w-full">
         {tickDays.map((day) => (
           <g key={day}>
-            <line x1={x(day)} x2={x(day)} y1={PAD.top} y2={H - PAD.bottom} stroke="#16223a" />
-            <text x={x(day)} y={H - 8} textAnchor="middle" fontSize="11" fill="#8494b5">
+            <line x1={x(day)} x2={x(day)} y1={PAD.top} y2={H - PAD.bottom} stroke="#ddd6c4" strokeDasharray="2 4" />
+            <text x={x(day)} y={H - 8} textAnchor="middle" fontSize="11" fill="#9a9f95">
               {shortDate(day)}
             </text>
           </g>
@@ -76,7 +76,7 @@ export function PriceChart({
             y={firstScale(value) + 4}
             textAnchor="end"
             fontSize="11"
-            fill="#8494b5"
+            fill="#9a9f95"
             fontFamily="var(--font-mono)"
           >
             {money(value, first.offer.currency)}
@@ -103,7 +103,7 @@ export function PriceChart({
           <span key={s.offer.id} className="inline-flex items-center gap-2">
             <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full" style={{ background: s.color }} />
             {s.offer.sourceName}
-            <span className="font-mono text-xs text-mute">{s.offer.currency}</span>
+            <span className="font-mono text-xs text-ink-3">{s.offer.currency}</span>
           </span>
         ))}
       </figcaption>

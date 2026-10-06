@@ -12,9 +12,9 @@ export function AlertForm({ offers }: { offers: OfferSummary[] }) {
   if (candidates.length === 0) return null;
 
   return (
-    <form action={action} className="card p-5 sm:p-6">
-      <h2 className="text-lg font-semibold">Email me when it drops</h2>
-      <p className="mt-1 text-sm text-mute">
+    <form action={action} className="sheet p-5 sm:p-6">
+      <h2 className="display text-2xl">Email me when it drops</h2>
+      <p className="mt-1 text-sm text-ink-2">
         No account. You confirm by link and every email has an unsubscribe link.
       </p>
       <div className="mt-5 grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
@@ -38,7 +38,7 @@ export function AlertForm({ offers }: { offers: OfferSummary[] }) {
             step="0.01"
             required
             placeholder={candidates[0].price ?? ""}
-            className="field font-mono"
+            className="field num"
           />
         </label>
         <label className="grid gap-1.5 text-sm sm:col-span-2">
@@ -58,7 +58,7 @@ export function AlertForm({ offers }: { offers: OfferSummary[] }) {
         role="status"
         aria-live="polite"
         className={`mt-4 min-h-5 text-sm ${
-          state.status === "ok" ? "text-ok" : state.status === "idle" ? "" : "text-warn"
+          state.status === "ok" ? "text-trail" : state.status === "idle" ? "" : "text-rise"
         }`}
       >
         {state.message}

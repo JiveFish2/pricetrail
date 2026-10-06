@@ -7,7 +7,7 @@ export const metadata = { title: "Alert removed", robots: { index: false } };
 
 export default function UnsubscribePage({ params }: PageProps<"/alerts/unsubscribe/[token]">) {
   return (
-    <Suspense fallback={<section className="mx-auto max-w-xl py-10 text-center text-mute">Working…</section>}>
+    <Suspense fallback={<section className="mx-auto max-w-xl py-10 text-center text-ink-2">Working…</section>}>
       <Result params={params} />
     </Suspense>
   );
@@ -22,7 +22,7 @@ async function Result({ params }: { params: PageProps<"/alerts/unsubscribe/[toke
   return (
     <section className="mx-auto max-w-xl py-10 text-center">
       <p className="eyebrow">{removed.length ? "Alert removed" : "Nothing to remove"}</p>
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight">
+      <h1 className="mt-3 text-4xl">
         {removed.length ? "You won't hear from us about this one." : "This alert was already removed."}
       </h1>
       <Link href="/" className="btn mt-8">Back to products</Link>
