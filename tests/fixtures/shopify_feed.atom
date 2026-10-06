@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf-8'?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:s="http://jadedpixel.com/-/spec/shopify" xml:lang="en">
+  <id>https://shop.8bitdo.com/collections/all.atom</id>
+  <link rel="alternate" type="text/html" href="https://shop.8bitdo.com/collections/all" />
+  <link rel="self" type="application/atom+xml" href="https://shop.8bitdo.com/collections/all.atom" />
+  <title>8BitDo</title>
+  <updated>2026-09-29T23:04:04+08:00</updated>
+  <author>
+    <name>8BitDo</name>
+  </author>
+  <entry>
+    <id>https://shop.8bitdo.com/products/7488962724017</id>
+    <published>2026-07-15T22:59:58+08:00</published>
+    <updated>2026-07-15T22:59:58+08:00</updated>
+    <link rel="alternate" type="text/html" href="https://shop.8bitdo.com/products/mystery-box-celebration" />
+    <title>13th Anniversary Mystery Box Celebration</title>
+    <s:type>Game Controller Accessories</s:type>
+    <s:vendor>8BitDo</s:vendor>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/7488962724017</id>
+      <title>0.71</title>
+      <s:price currency="USD">0.71</s:price>
+      <s:sku>88EC05</s:sku>
+      <s:grams>100</s:grams>
+    </s:variant>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/7488962724017</id>
+      <title>7.15</title>
+      <s:price currency="USD">7.15</s:price>
+      <s:sku>88EC05</s:sku>
+      <s:grams>100</s:grams>
+    </s:variant>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/7488962724017</id>
+      <title>71.5</title>
+      <s:price currency="USD">71.50</s:price>
+      <s:sku>88EC05</s:sku>
+      <s:grams>100</s:grams>
+    </s:variant>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/7488962724017</id>
+      <title>171.5</title>
+      <s:price currency="USD">171.50</s:price>
+      <s:sku>88EC05</s:sku>
+      <s:grams>100</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://shop.8bitdo.com/products/9071189131441</id>
+    <published>2026-07-15T22:44:21+08:00</published>
+    <updated>2026-07-15T22:44:21+08:00</updated>
+    <link rel="alternate" type="text/html" href="https://shop.8bitdo.com/products/flippad" />
+    <title>8BitDo FlipPad</title>
+    <s:type>Game Controllers</s:type>
+    <s:vendor>8BitDo</s:vendor>
+    <s:tag>Accessories</s:tag>
+    <s:tag>All</s:tag>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/9071189131441</id>
+      <title>Black</title>
+      <s:price currency="USD">29.99</s:price>
+      <s:sku>85JA02</s:sku>
+      <s:grams>0</s:grams>
+    </s:variant>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/9071189131441</id>
+      <title>G Classic</title>
+      <s:price currency="USD">29.99</s:price>
+      <s:sku>85JA01</s:sku>
+      <s:grams>0</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://shop.8bitdo.com/products/9034781687985</id>
+    <published>2026-05-26T16:04:01+08:00</published>
+    <updated>2026-05-26T16:04:01+08:00</updated>
+    <link rel="alternate" type="text/html" href="https://shop.8bitdo.com/products/8bitdo-ultimate-3e-controller-for-xbox" />
+    <title>8BitDo Ultimate 3E Controller for XBOX</title>
+    <s:type>Game Controllers</s:type>
+    <s:vendor>8BitDo</s:vendor>
+    <s:tag>2.4G</s:tag>
+    <s:tag>All</s:tag>
+    <s:tag>Bluetooth</s:tag>
+    <s:tag>XBOX</s:tag>
+    <s:variant>
+      <id>https://shop.8bitdo.com/products/9034781687985</id>
+      <title>Default Title</title>
+      <s:price currency="USD">149.99</s:price>
+      <s:sku>81HF01D-GL</s:sku>
+      <s:grams>1500</s:grams>
+    </s:variant>
+  </entry>
+  </feed>

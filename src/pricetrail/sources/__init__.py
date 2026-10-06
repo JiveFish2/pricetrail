@@ -8,6 +8,8 @@ from dataclasses import dataclass
 
 from pricetrail.http import Client
 from pricetrail.sources.base import Observation, Offer, Source
+from pricetrail.sources.feed import AtomFeedSource
+from pricetrail.sources.html import ProductPageSource
 from pricetrail.sources.mercadolivre import MercadoLivreSource
 from pricetrail.sources.steam import SteamSource
 
@@ -52,7 +54,25 @@ KNOWN_SOURCES = (
         "BRL",
         "https://produto.mercadolivre.com.br/{id}",
     ),
+    SourceInfo(
+        "fangamer",
+        "Fangamer",
+        "html",
+        "https://www.fangamer.com",
+        "USD",
+        "https://www.fangamer.com/products/{id}",
+    ),
+    SourceInfo(
+        "8bitdo",
+        "8BitDo",
+        "feed",
+        "https://shop.8bitdo.com",
+        "USD",
+        "https://shop.8bitdo.com/products/{id}",
+    ),
 )
+
+FEED_URLS = {"8bitdo": "https://shop.8bitdo.com/collections/all.atom"}
 
 
 def build_sources(client: Client) -> dict[str, Source]:
@@ -72,6 +92,23 @@ def build_sources(client: Client) -> dict[str, Source]:
                 client=client,
             )
             sources[source.id] = source
+        elif info.kind == "html":
+            sources[info.id] = ProductPageSource(
+                id=info.id,
+                name=info.name,
+                homepage=info.homepage,
+                currency=info.currency,
+                client=client,
+            )
+        elif info.kind == "feed":
+            sources[info.id] = AtomFeedSource(
+                id=info.id,
+                name=info.name,
+                homepage=info.homepage,
+                currency=info.currency,
+                feed_url=FEED_URLS[info.id],
+                client=client,
+            )
 
     client_id = os.environ.get("ML_CLIENT_ID")
     client_secret = os.environ.get("ML_CLIENT_SECRET")

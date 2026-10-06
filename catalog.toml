@@ -61,3 +61,61 @@ slug = "sea-of-stars"
 name = "Sea of Stars"
 category = "Games"
 offers = { steam-br = "1244090", steam-us = "1244090" }
+
+# Game merchandise, read from the store's product pages (schema.org microdata).
+
+[[products]]
+slug = "hollow-knight-plush"
+name = "Hollow Knight Plush"
+category = "Merch"
+offers = { fangamer = "hollow-knight-plush" }
+
+[[products]]
+slug = "undertale-toriel-plush"
+name = "Undertale Toriel Plush"
+category = "Merch"
+offers = { fangamer = "undertale-toriel-plush" }
+
+[[products]]
+slug = "stardew-valley-guidebook"
+name = "Stardew Valley Guidebook"
+category = "Merch"
+offers = { fangamer = "stardew-valley-guidebook" }
+
+[[products]]
+slug = "hollow-knight-shirt"
+name = "Hollow Knight Shirt"
+category = "Merch"
+offers = { fangamer = "hollow-knight-shirt" }
+
+# Controllers and keyboards, read from the store's Atom product feed.
+
+[[products]]
+slug = "8bitdo-ultimate-3e-xbox"
+name = "8BitDo Ultimate 3E Controller for Xbox"
+category = "Hardware"
+offers = { 8bitdo = "9034781687985" }
+
+[[products]]
+slug = "8bitdo-ultimate-2-clear-blue"
+name = "8BitDo Ultimate 2 Wireless Controller (Clear Blue)"
+category = "Hardware"
+offers = { 8bitdo = "9050537197745" }
+
+[[products]]
+slug = "8bitdo-arcade-stick-purple"
+name = "8BitDo Arcade Stick (Purple)"
+category = "Hardware"
+offers = { 8bitdo = "9050537623729" }
+
+[[products]]
+slug = "8bitdo-retro-87-clear-blue"
+name = "8BitDo Retro 87 Keyboard (Clear Blue)"
+category = "Hardware"
+offers = { 8bitdo = "9050537427121" }
+
+[[products]]
+slug = "8bitdo-64-wireless-controller"
+name = "8BitDo 64 2.4G Wireless Controller (Classic Grey)"
+category = "Hardware"
+offers = { 8bitdo = "8991980650673" }
