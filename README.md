@@ -12,8 +12,9 @@ retries and rate limiting, every run recorded.
 ## How it works
 
 ```
-catalog.toml ──seed──▶ PostgreSQL ◀──collect── sources (Steam BR/US, Mercado Livre)
-                          │                        ▲
+catalog.toml ──seed──▶ PostgreSQL ◀──collect── sources: API (Steam, Mercado Livre)
+                          │                        ▲       HTML (Fangamer)
+                          │                        │       feed (8BitDo)
                           │                        └── GitHub Actions, daily cron
                           └──▶ web app + API (phase 3)
 ```
@@ -32,16 +33,25 @@ catalog.toml ──seed──▶ PostgreSQL ◀──collect── sources (Stea
 |---|---|---|
 | Steam (Brazil, US) | Public storefront JSON | none |
 | Mercado Livre | Official API | `ML_CLIENT_ID` / `ML_CLIENT_SECRET` (app registered at developers.mercadolivre.com.br); skipped when absent |
+| Fangamer | Product pages, schema.org microdata | none |
+| 8BitDo | Atom product feed | none |
 
-More sources (an HTML scraper reading structured data from product pages and a
-CSV/XML feed importer) are planned.
+The HTML source (`sources/html.py`) reads schema.org `Product` offers from
+either JSON-LD or microdata, so it works unchanged on any store that publishes
+structured data. The feed source (`sources/feed.py`) reads the Shopify-style
+Atom feed that many stores expose at `/collections/all.atom`.
+
+Each run is recorded per source (status, offers read, duration, error); the
+`source_status` view summarises the last run and the success rate of the past
+seven days, which is what `pricetrail status` prints and the status page will show.
 
 ## Collection ethics
 
 - Only public product data: names, prices, availability. No personal data.
 - Identified `User-Agent`, one request per second, batches where the source
   allows them, and at most one run per day.
-- `robots.txt` and terms of service are checked before a source is added.
+- `robots.txt` and terms of service are checked before a source is added
+  (the two Shopify stores state that public product pages are crawlable).
 - Failures back off exponentially; a source that keeps failing is skipped for
   the day, never retried in a loop.
 
@@ -71,6 +81,6 @@ pytest                                   # unit + database tests
 ## Roadmap
 
 - [x] Phase 1: schema, collector, Steam and Mercado Livre sources, daily cron
-- [ ] Phase 2: HTML and feed sources, status page data
+- [x] Phase 2: HTML and feed sources, status data
 - [ ] Phase 3: web app (catalog, price charts, email alerts, read-only API)
 - [ ] Phase 4: domain, documentation, case study
