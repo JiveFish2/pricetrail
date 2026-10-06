@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #050a15;
+  --color-panel: #0a1322;
+  --color-fg: #e8eefc;
+  --color-mute: #8494b5;
+  --color-line: #16223a;
+  --color-a: #4f8cff;
+  --color-b: #8ec1ff;
+  --color-ok: #5fd39a;
+  --color-warn: #f0b072;
+  --color-bad: #ff6b7a;
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, Menlo, Consolas, monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-b);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-a);
+  color: var(--color-bg);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-a);
+}
+
+.card {
+  background: color-mix(in srgb, var(--color-panel) 85%, transparent);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+}
+
+.field {
+  width: 100%;
+  border-radius: 0.6rem;
+  border: 1px solid var(--color-line);
+  background: color-mix(in srgb, var(--color-panel) 80%, transparent);
+  padding: 0.65rem 0.9rem;
+  color: var(--color-fg);
+}
+.field:focus-visible {
+  outline: 2px solid var(--color-a);
+  outline-offset: 0;
+  border-color: var(--color-a);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-a);
+  color: var(--color-bg);
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.btn:hover {
+  transform: translateY(-1px);
+}
+.btn:disabled {
+  opacity: 0.6;
+  transform: none;
+}
