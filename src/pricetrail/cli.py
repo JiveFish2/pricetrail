@@ -45,19 +45,20 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "status":
             with conn.cursor() as cur:
                 cur.execute(
-                    "select distinct on (source_id) source_id, status, started_at, finished_at,"
-                    " offers_ok, offers_total, error from runs"
-                    " order by source_id, started_at desc"
+                    "select id, kind, last_status, last_offers_ok, last_offers_total,"
+                    " last_run_at, avg_seconds_7d, ok_rate_7d, runs_7d, last_error"
+                    " from source_status"
                 )
                 rows = cur.fetchall()
-            if not rows:
-                print("no runs yet")
-            for source_id, status, started, finished, ok, total, error in rows:
-                took = f"{(finished - started).total_seconds():.1f}s" if finished else "running"
-                print(
-                    f"{source_id:<14} {status:<8} {ok}/{total:<4} {started:%Y-%m-%d %H:%M} "
-                    f"{took}" + (f"  {error}" if error else "")
+            print(f"{'source':<14} {'kind':<5} {'last run':<24} {'7 days':<14} error")
+            for id, kind, status, ok, total, at, seconds, rate, runs, error in rows:
+                last = (
+                    f"{status} {ok}/{total} {at:%m-%d %H:%M} {seconds or 0}s"
+                    if status
+                    else "never ran"
                 )
+                week = f"{rate}% of {runs}" if runs else "-"
+                print(f"{id:<14} {kind:<5} {last:<24} {week:<14} {error or ''}")
     return 0
 
 
