@@ -66,7 +66,7 @@ async function ProductDetails({ params }: { params: PageProps<"/p/[slug]">["para
             {product.offers.map((offer) => {
               const off = discount(offer.price, offer.listPrice);
               return (
-                <article key={offer.id} className="sheet p-4">
+                <article key={offer.id} className={`sheet p-4 ${off !== null ? "on-sale" : ""}`}>
                   <p className="eyebrow">{offer.sourceName}</p>
                   <p className="num mt-2 text-2xl">
                     {offer.available === false ? (
@@ -74,7 +74,7 @@ async function ProductDetails({ params }: { params: PageProps<"/p/[slug]">["para
                     ) : (
                       money(offer.price, offer.currency)
                     )}
-                    {off !== null && <span className="tag tag-drop ml-2 align-middle">−{off}%</span>}
+                    {off !== null && <span className="tag tag-gold ml-2 align-middle">−{off}%</span>}
                   </p>
                   <dl className="dashed mt-3 space-y-1 pt-3 text-sm text-ink-2">
                     {off !== null && (
