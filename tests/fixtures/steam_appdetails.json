@@ -1,0 +1,22 @@
+{
+    "1091500": {
+        "success": true,
+        "data": {
+            "price_overview": {
+                "currency": "BRL",
+                "initial": 19990,
+                "final": 5997,
+                "discount_percent": 70,
+                "initial_formatted": "R$ 199,90",
+                "final_formatted": "R$ 59,97"
+            }
+        }
+    },
+    "440": {
+        "success": true,
+        "data": []
+    },
+    "999999999": {
+        "success": false
+    }
+}
