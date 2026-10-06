@@ -1,0 +1,15 @@
+# Local PostgreSQL for development. Production uses a hosted database (DATABASE_URL).
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pricetrail
+      POSTGRES_PASSWORD: pricetrail
+      POSTGRES_DB: pricetrail
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
