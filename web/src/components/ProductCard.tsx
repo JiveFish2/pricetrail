@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Ago } from "@/components/Ago";
 import { ProductImage } from "@/components/ProductImage";
 import type { ProductSummary } from "@/lib/data";
-import { discount, money } from "@/lib/format";
+import { change, discount, money } from "@/lib/format";
 
 export function ProductCard({ product, priority = false }: { product: ProductSummary; priority?: boolean }) {
   const updated = product.offers.find((o) => o.observedAt)?.observedAt ?? null;
@@ -27,6 +27,7 @@ export function ProductCard({ product, priority = false }: { product: ProductSum
       <ul className="dashed mt-auto pt-3">
         {product.offers.map((offer) => {
           const off = discount(offer.price, offer.listPrice);
+          const delta = change(offer.price, offer.previousPrice);
           const atLow =
             offer.price !== null && offer.low30 !== null && offer.price === offer.low30 && offer.high30 !== offer.low30;
           return (
@@ -34,7 +35,9 @@ export function ProductCard({ product, priority = false }: { product: ProductSum
               <span className="text-ink-2">{offer.sourceName}</span>
               <span className="flex items-baseline gap-2">
                 {off !== null && <span className="tag tag-gold">−{off}%</span>}
-                {atLow && off === null && <span className="tag tag-drop">30-day low</span>}
+                {delta !== null && delta < 0 && <span className="tag tag-drop">↓ {delta}%</span>}
+                {delta !== null && delta > 0 && <span className="tag tag-rise">↑ +{delta}%</span>}
+                {atLow && off === null && delta === null && <span className="tag tag-drop">30-day low</span>}
                 <span className={`num ${offer.available === false ? "text-ink-3 line-through" : ""}`}>
                   {offer.available === false ? "unavailable" : money(offer.price, offer.currency)}
                 </span>

@@ -15,6 +15,7 @@ export type OfferSummary = {
   listPrice: string | null;
   available: boolean | null;
   observedAt: string | null;
+  previousPrice: string | null; // the observation before the latest one
   low30: string | null;
   high30: string | null;
 };
@@ -62,6 +63,7 @@ type OfferRow = {
   list_price: string | null;
   available: boolean | null;
   observed_at: Date | null;
+  previous_price: string | null;
   low30: string | null;
   high30: string | null;
 };
@@ -75,10 +77,18 @@ function toProduct(row: ProductRow) {
 // Latest price point per offer plus the 30-day range, for one or all products.
 async function offerRows(productId?: number): Promise<OfferRow[]> {
   return sql<OfferRow[]>`
-    with latest as (
-      select distinct on (offer_id) offer_id, price, list_price, available, observed_at
+    with ordered as (
+      select offer_id, price, list_price, available, observed_at,
+             row_number() over (partition by offer_id order by observed_at desc) as n
       from price_points
-      order by offer_id, observed_at desc
+    ),
+    latest as (select * from ordered where n = 1),
+    previous as (
+      -- The last observation with a different price, so a flat run still shows the step before it.
+      select distinct on (o.offer_id) o.offer_id, o.price
+      from ordered o join latest l on l.offer_id = o.offer_id
+      where o.n > 1 and o.price is distinct from l.price
+      order by o.offer_id, o.observed_at desc
     ),
     range as (
       select offer_id, min(price) as low30, max(price) as high30
@@ -88,10 +98,11 @@ async function offerRows(productId?: number): Promise<OfferRow[]> {
     )
     select o.product_id, o.id, o.source_id, s.name as source_name, s.kind as source_kind,
            s.currency, o.url, l.price, l.list_price, l.available, l.observed_at,
-           r.low30, r.high30
+           pv.price as previous_price, r.low30, r.high30
     from offers o
     join sources s on s.id = o.source_id
     left join latest l on l.offer_id = o.id
+    left join previous pv on pv.offer_id = o.id
     left join range r on r.offer_id = o.id
     ${productId ? sql`where o.product_id = ${productId}` : sql``}
     order by o.product_id, s.currency, s.id
@@ -110,6 +121,7 @@ function toOffer(row: OfferRow): OfferSummary {
     listPrice: row.list_price,
     available: row.available,
     observedAt: row.observed_at?.toISOString() ?? null,
+    previousPrice: row.previous_price,
     low30: row.low30,
     high30: row.high30,
   };

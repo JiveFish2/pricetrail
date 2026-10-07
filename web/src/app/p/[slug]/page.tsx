@@ -7,7 +7,7 @@ import { AlertForm } from "@/components/AlertForm";
 import { PriceChart } from "@/components/PriceChart";
 import { ProductImage } from "@/components/ProductImage";
 import { getProduct, listSlugs } from "@/lib/data";
-import { discount, money } from "@/lib/format";
+import { change, discount, money } from "@/lib/format";
 
 export async function generateStaticParams() {
   return (await listSlugs()).map((slug) => ({ slug }));
@@ -65,6 +65,7 @@ async function ProductDetails({ params }: { params: PageProps<"/p/[slug]">["para
           <div className="mt-6 grid gap-3 sm:grid-cols-2" aria-label="Current prices">
             {product.offers.map((offer) => {
               const off = discount(offer.price, offer.listPrice);
+              const delta = change(offer.price, offer.previousPrice);
               return (
                 <article key={offer.id} className={`sheet p-4 ${off !== null ? "on-sale" : ""}`}>
                   <p className="eyebrow">{offer.sourceName}</p>
@@ -75,6 +76,12 @@ async function ProductDetails({ params }: { params: PageProps<"/p/[slug]">["para
                       money(offer.price, offer.currency)
                     )}
                     {off !== null && <span className="tag tag-gold ml-2 align-middle">−{off}%</span>}
+                    {delta !== null && (
+                      <span className={`tag ml-2 align-middle ${delta < 0 ? "tag-drop" : "tag-rise"}`}>
+                        {delta < 0 ? "↓" : "↑"} {delta > 0 ? "+" : ""}
+                        {delta}% since last change
+                      </span>
+                    )}
                   </p>
                   <dl className="dashed mt-3 space-y-1 pt-3 text-sm text-ink-2">
                     {off !== null && (

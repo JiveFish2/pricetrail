@@ -29,3 +29,12 @@ export function shortDate(day: string): string {
     timeZone: "UTC",
   });
 }
+
+// Percentage change from the previous observation; negative means a drop.
+export function change(price: string | null, previous: string | null): number | null {
+  if (!price || !previous) return null;
+  const p = Number(price);
+  const b = Number(previous);
+  if (!(b > 0) || p === b) return null;
+  return Math.round(((p - b) / b) * 100);
+}
