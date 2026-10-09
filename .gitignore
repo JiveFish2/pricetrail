@@ -5,3 +5,7 @@ __pycache__/
 .ruff_cache/
 .env
 web/AGENTS.md
+CLAUDE.md
+CLAUDE.local.md
+.env.*
+!.env.example
