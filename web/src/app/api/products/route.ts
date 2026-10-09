@@ -4,6 +4,6 @@ export async function GET() {
   const products = await listProducts();
   return Response.json(
     { products },
-    { headers: { "Cache-Control": "public, max-age=300, s-maxage=3600" } },
+    { headers: { "Cache-Control": "public, max-age=60, s-maxage=300" } },
   );
 }
