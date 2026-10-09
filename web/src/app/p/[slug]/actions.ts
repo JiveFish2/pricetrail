@@ -2,7 +2,7 @@
 
 import { randomBytes } from "node:crypto";
 import { sql } from "@/lib/db";
-import { sendEmail } from "@/lib/email";
+import { confirmationHtml, sendEmail } from "@/lib/email";
 import { money } from "@/lib/format";
 
 export type AlertState = { status: "idle" | "ok" | "invalid" | "error"; message?: string };
@@ -23,9 +23,17 @@ export async function createAlert(_prev: AlertState, formData: FormData): Promis
 
   try {
     const [offer] = await sql<
-      { id: number; url: string; currency: string; source: string; product: string; slug: string }[]
+      {
+        id: number;
+        url: string;
+        currency: string;
+        source: string;
+        product: string;
+        slug: string;
+        image_url: string | null;
+      }[]
     >`
-      select o.id, o.url, s.currency, s.name as source, p.name as product, p.slug
+      select o.id, o.url, s.currency, s.name as source, p.name as product, p.slug, p.image_url
       from offers o join sources s on s.id = o.source_id join products p on p.id = o.product_id
       where o.id = ${offerId}
     `;
@@ -51,16 +59,25 @@ export async function createAlert(_prev: AlertState, formData: FormData): Promis
 
     const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3001";
     if (!alert.confirmed_at) {
+      const confirmUrl = `${base}/alerts/confirm/${alert.confirm_token}`;
       await sendEmail({
         to: email,
         subject: `Confirm your PriceTrail alert for ${offer.product}`,
         text: [
           `You asked to be told when ${offer.product} at ${offer.source} goes at or below ${money(target, offer.currency)}.`,
           "",
-          `Confirm this alert: ${base}/alerts/confirm/${alert.confirm_token}`,
+          `Confirm this alert: ${confirmUrl}`,
           "",
           "If you did not request this, ignore this message and nothing will be sent.",
         ].join("\n"),
+        html: confirmationHtml({
+          product: offer.product,
+          source: offer.source,
+          target: money(target, offer.currency),
+          imageUrl: offer.image_url,
+          confirmUrl,
+          siteUrl: base,
+        }),
       });
       return { status: "ok", message: "Check your inbox for a confirmation link." };
     }

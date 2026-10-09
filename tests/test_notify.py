@@ -8,7 +8,7 @@ import pytest
 
 from pricetrail import db
 from pricetrail.catalog import seed
-from pricetrail.notify import DueAlert, due_alerts, money, notify, render
+from pricetrail.notify import DueAlert, due_alerts, money, notify, render, render_html
 
 pytestmark = pytest.mark.skipif(not os.environ.get("DATABASE_URL"), reason="DATABASE_URL not set")
 
@@ -112,3 +112,27 @@ def test_render_mentions_product_prices_and_links():
     assert "Game A at Steam (US) is now $19.99" in text
     assert "https://example.test/p/game-a" in text
     assert "https://example.test/alerts/unsubscribe/tok" in text
+
+
+def test_render_html_escapes_and_links():
+    html = render_html(
+        DueAlert(
+            1,
+            "a@example.com",
+            Decimal("20"),
+            Decimal("19.99"),
+            "USD",
+            "Game <A>",
+            "game-a",
+            "Steam (US)",
+            "https://store.test/1?a=1&b=2",
+            "tok",
+            "https://img.test/a.jpg",
+        ),
+        "https://example.test",
+    )
+    assert "Game &lt;A&gt;" in html and "Game <A>" not in html
+    assert "$19.99" in html and "$20.00" in html
+    assert 'href="https://store.test/1?a=1&amp;b=2"' in html
+    assert 'src="https://img.test/a.jpg"' in html
+    assert "https://example.test/alerts/unsubscribe/tok" in html
