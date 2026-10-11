@@ -1,0 +1,48 @@
+name: Probe candidate sources
+
+# One-off check: do candidate stores answer requests from GitHub's runners?
+# Fangamer and 8BitDo are controls (they answer 429 here). Reads one page per
+# store with the collector's client and parser; writes nothing.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e .
+      - shell: python
+        run: |
+          import httpx
+          from pricetrail.http import Client
+          from pricetrail.sources.structured_data import parse_offers
+
+          URLS = [
+              "https://www.fangamer.com/products/hollow-knight-plush",
+              "https://shop.8bitdo.com/collections/all.atom",
+              "https://www.xbox.com/en-US/games/store/stardew-valley/C3D891Z6TNQM",
+              "https://www.xbox.com/pt-BR/games/store/stardew-valley/C3D891Z6TNQM",
+              "https://www.sparkfun.com/sparkfun-qwiic-pro-micro-usb-c-atmega32u4.html",
+              "https://www.adafruit.com/product/4295",
+              "https://www.kabum.com.br/produto/520367",
+          ]
+          client = Client(retries=1)
+          for url in URLS:
+              try:
+                  response = client.get(url)
+              except httpx.HTTPStatusError as error:
+                  print(f"{error.response.status_code}  {url}")
+                  continue
+              except httpx.TransportError as error:
+                  print(f"ERR  {url}  {error!r}")
+                  continue
+              offers = parse_offers(response.text)
+              price = f"{offers[0].price} {offers[0].currency}" if offers else "no price"
+              print(f"{response.status_code}  {url}  {price}")
