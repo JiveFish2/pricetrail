@@ -91,3 +91,24 @@ def test_html_source_skips_pages_priced_in_another_currency():
     )
 
     assert source.fetch([Offer(1, "plush", "https://example.test/p")]) == []
+
+
+def test_html_source_passes_the_store_crawl_delay_to_the_client():
+    page = (FIXTURES / "fangamer_product.html").read_text()
+    pauses: list[float | None] = []
+
+    class RecordingClient(Client):
+        def get(self, url, *, pause=None, **kwargs):
+            pauses.append(pause)
+            return super().get(url, pause=0, **kwargs)
+
+    client = RecordingClient(
+        pause=0, transport=httpx.MockTransport(lambda _: httpx.Response(200, text=page))
+    )
+    source = ProductPageSource(
+        id="x", name="X", homepage="https://example.test", currency="USD", client=client, pause=10.0
+    )
+
+    source.fetch([Offer(1, "a", "https://example.test/a"), Offer(2, "b", "https://example.test/b")])
+
+    assert pauses == [10.0, 10.0]

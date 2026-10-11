@@ -41,3 +41,18 @@ def test_client_errors_are_not_retried():
     with pytest.raises(httpx.HTTPStatusError):
         client.get("https://example.test/")
     assert calls == 1
+
+
+def test_pause_per_call_overrides_the_client_pause(monkeypatch):
+    waits: list[float] = []
+    clock = iter(range(0, 1000, 1))
+    monkeypatch.setattr("pricetrail.http.time.monotonic", lambda: float(next(clock)))
+    monkeypatch.setattr("pricetrail.http.time.sleep", waits.append)
+    client = Client(pause=1.0, transport=httpx.MockTransport(lambda _: httpx.Response(200)))
+
+    client.get("https://example.test/a")
+    client.get("https://example.test/b", pause=10.0)
+
+    # The clock advances one second per reading: 1s before the first call, then
+    # the second call tops the gap up to the 10s crawl delay.
+    assert waits == [1.0, 9.0]

@@ -33,10 +33,12 @@ class Client:
             transport=transport,
         )
 
-    def get(self, url: str, **kwargs) -> httpx.Response:
+    def get(self, url: str, *, pause: float | None = None, **kwargs) -> httpx.Response:
+        """GET with retries. `pause` overrides the client's pause for this call,
+        for hosts whose robots.txt asks for a longer crawl delay."""
         delay = 2.0
         for attempt in range(1, self.retries + 1):
-            self._wait_turn()
+            self._wait_turn(self.pause if pause is None else pause)
             try:
                 response = self._client.get(url, **kwargs)
             except httpx.TransportError as error:
@@ -54,10 +56,10 @@ class Client:
             delay *= 2
         raise AssertionError("unreachable")
 
-    def _wait_turn(self) -> None:
+    def _wait_turn(self, pause: float) -> None:
         elapsed = time.monotonic() - self._last_request
-        if elapsed < self.pause:
-            time.sleep(self.pause - elapsed)
+        if elapsed < pause:
+            time.sleep(pause - elapsed)
         self._last_request = time.monotonic()
 
     def close(self) -> None:

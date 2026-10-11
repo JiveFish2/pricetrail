@@ -22,18 +22,28 @@ log = logging.getLogger(__name__)
 class ProductPageSource:
     kind = "html"
 
-    def __init__(self, *, id: str, name: str, homepage: str, currency: str, client: Client) -> None:
+    def __init__(
+        self,
+        *,
+        id: str,
+        name: str,
+        homepage: str,
+        currency: str,
+        client: Client,
+        pause: float | None = None,
+    ) -> None:
         self.id = id
         self.name = name
         self.homepage = homepage
         self.currency = currency
         self.client = client
+        self.pause = pause  # the store's crawl delay, when it asks for more than the default
 
     def fetch(self, offers: list[Offer]) -> list[Observation]:
         observations: list[Observation] = []
         for offer in offers:
             try:
-                response = self.client.get(offer.url)
+                response = self.client.get(offer.url, pause=self.pause)
             except httpx.HTTPStatusError as error:
                 if error.response.status_code in (404, 410):
                     log.warning(
