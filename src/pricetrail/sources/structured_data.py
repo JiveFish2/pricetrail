@@ -9,10 +9,12 @@ returns plain `PageOffer` records, using only the standard library.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from html.parser import HTMLParser
 from typing import Any
+from urllib.parse import urlsplit, urlunsplit
 
 IN_STOCK = {"InStock", "PreOrder", "PreSale", "LimitedAvailability", "OnlineOnly", "InStoreOnly"}
 
@@ -115,9 +117,14 @@ def _first(value: Any) -> str | None:
 
 
 def _absolute(url: str | None) -> str | None:
-    if url and url.startswith("//"):
-        return "https:" + url
-    return url
+    if not url:
+        return url
+    if url.startswith("//"):
+        url = "https:" + url
+    # Collapse doubled slashes in the path: Adafruit publishes
+    # cdn-shop.adafruit.com//970x728/…, which its CDN answers with 404.
+    parts = urlsplit(url)
+    return urlunsplit(parts._replace(path=re.sub(r"/{2,}", "/", parts.path)))
 
 
 def _walk(node: Any):

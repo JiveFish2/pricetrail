@@ -94,3 +94,11 @@ def test_product_image_from_json_ld_and_og_fallback():
         == "https://x.test/og.jpg"
     )
     assert product_image("<html></html>") is None
+
+
+def test_product_image_collapses_doubled_slashes_in_the_path():
+    html = (
+        '<script type="application/ld+json">{"@type": "Product", "name": "Pi",'
+        ' "image": ["https:\\/\\/cdn-shop.adafruit.com\\/\\/970x728\\/5813-01.jpg"]}</script>'
+    )
+    assert product_image(html) == "https://cdn-shop.adafruit.com/970x728/5813-01.jpg"
