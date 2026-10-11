@@ -1,0 +1,1 @@
+PriceTrail: a price monitor that shows whether each source was read, with its status page
