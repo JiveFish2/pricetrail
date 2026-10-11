@@ -7,8 +7,9 @@ const nextConfig: NextConfig = {
     // Product images come straight from each store's CDN.
     remotePatterns: [
       { protocol: "https", hostname: "shared.akamai.steamstatic.com" },
-      { protocol: "https", hostname: "cdn.shopify.com" },
-      { protocol: "https", hostname: "www.fangamer.com" },
+      { protocol: "https", hostname: "store-images.s-microsoft.com" },
+      { protocol: "https", hostname: "cdn-shop.adafruit.com" },
+      { protocol: "https", hostname: "www.sparkfun.com" },
     ],
   },
   turbopack: {

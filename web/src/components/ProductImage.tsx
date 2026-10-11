@@ -1,7 +1,7 @@
 import Image from "next/image";
 
-// Store images differ in shape: Steam headers are wide banners, merch and
-// hardware shots are near-square product photos on white. Games fill the frame;
+// Store images differ in shape: Steam headers and Xbox hero art are wide
+// banners, hardware shots are near-square product photos on white. Games fill the frame;
 // everything else sits inside it on the sheet colour.
 export function ProductImage({
   src,

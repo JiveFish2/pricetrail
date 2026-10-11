@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "PriceTrail", template: "%s · PriceTrail" },
   description:
-    "Daily price history for games, merch and hardware across several stores, with email alerts when a price drops.",
+    "Daily price history for games and hardware across several stores, with email alerts when a price drops.",
 };
 
 const links = [

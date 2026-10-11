@@ -2,8 +2,8 @@
 
 **Prices leave a trail. Follow it before you buy.**
 
-PriceTrail checks the price of games, merch and hardware in several stores once
-a day, keeps the history of every offer, and emails you when a product reaches
+PriceTrail checks the price of games and hardware in several stores once a
+day, keeps the history of every offer, and emails you when a product reaches
 the price you asked for. A public status page shows whether each store was read
 successfully, so a broken collector never fails silently.
 
@@ -19,10 +19,11 @@ limits, every run recorded, and the result served as a site, an API and email.
 
 ## What it does
 
-- **Daily prices from four kinds of source.** An official API, a public JSON
-  storefront, product pages with structured data, and an Atom product feed.
-- **Price history per offer.** The same game on Steam Brazil and Steam US is
-  tracked side by side, with the 30-day low and high.
+- **Daily prices from several kinds of source.** A public JSON storefront,
+  product pages read through their schema.org data or the store state they
+  embed, and an official API.
+- **Price history per offer.** The same game on Steam and the Xbox Store, in
+  Brazil and the US, is tracked side by side, with the 30-day low and high.
 - **Email alerts without accounts.** Pick a store and a target price, confirm by
   link, get one email when the price gets there. Every email can be stopped by
   link.
@@ -56,8 +57,8 @@ The product and current price are real; the $30.00 target is an example.
 
 ```
 catalog.toml ──seed──▶ PostgreSQL ◀──collect── sources: API (Steam, Mercado Livre)
-                          │                        ▲       HTML (Fangamer)
-                          │                        │       feed (8BitDo)
+                          │                        ▲       HTML (Xbox Store, Adafruit,
+                          │                        │             SparkFun)
                           │                        └── GitHub Actions, daily cron
                           │                            (collect → notify → revalidate site)
                           └──▶ web/ (Next.js): catalog, price charts, status, JSON API, alerts
@@ -81,13 +82,18 @@ catalog.toml ──seed──▶ PostgreSQL ◀──collect── sources: API 
 |---|---|---|
 | Steam (Brazil, US) | Public storefront JSON | none |
 | Mercado Livre | Official API | `ML_CLIENT_ID` / `ML_CLIENT_SECRET` (app registered at developers.mercadolivre.com.br); skipped when absent |
-| Fangamer | Product pages, schema.org microdata | none |
-| 8BitDo | Atom product feed | none |
+| Xbox Store (Brazil, US) | Product pages, embedded store state | none |
+| Adafruit | Product pages, schema.org data | none |
+| SparkFun | Product pages, schema.org data | none |
 
 The HTML source (`sources/html.py`) reads schema.org `Product` offers from
 either JSON-LD or microdata, so it works unchanged on any store that publishes
-structured data. The feed source (`sources/feed.py`) reads the Shopify-style
-Atom feed that many stores expose at `/collections/all.atom`.
+structured data. The Xbox Store only publishes that for games already on sale,
+so `sources/xbox.py` reads the store state embedded in the page instead, which
+also covers pre-orders and keeps the regular price during a sale (Game Pass
+member prices are left out). A feed source (`sources/feed.py`) reads the
+Shopify-style Atom feed many stores expose at `/collections/all.atom`; no
+current store uses it.
 
 Each run is recorded per source (status, offers read, duration, error); the
 `source_status` view summarises the last run and the success rate of the past
@@ -106,10 +112,12 @@ Responses are cached for five minutes. Please keep it to a few requests a minute
 ## Collection ethics
 
 - Only public product data: names, prices, availability. No personal data.
-- Identified `User-Agent`, one request per second, batches where the source
+- Identified `User-Agent`, one request per second (or the store's
+  `Crawl-delay`, such as SparkFun's ten seconds), batches where the source
   allows them, and at most one run per day.
-- `robots.txt` and terms of service are checked before a source is added
-  (the two Shopify stores state that public product pages are crawlable).
+- `robots.txt` and terms of service are checked before a source is added, and
+  a store that blocks the collector is dropped, not worked around. Two Shopify
+  stores were removed after they started answering 429 to GitHub's runners.
 - Failures back off exponentially; a source that keeps failing is skipped for
   the day, never retried in a loop.
 

@@ -1,121 +1,104 @@
 # Products PriceTrail tracks. `pricetrail seed` upserts this file into the database.
 # Each product lists one offer per source; the key is the source id and the
-# value is the source's own identifier (Steam app id, Mercado Livre item id).
+# value is the source's own identifier (Steam app id, Xbox Store product id,
+# Mercado Livre item id, the store's product path for HTML sources).
 
 [[products]]
 slug = "elden-ring"
 name = "Elden Ring"
 category = "Games"
-offers = { steam-br = "1245620", steam-us = "1245620" }
+offers = { steam-br = "1245620", steam-us = "1245620" , xbox-us = "9P3J32CTXLRZ", xbox-br = "9P3J32CTXLRZ" }
 
 [[products]]
 slug = "cyberpunk-2077"
 name = "Cyberpunk 2077"
 category = "Games"
-offers = { steam-br = "1091500", steam-us = "1091500" }
+offers = { steam-br = "1091500", steam-us = "1091500" , xbox-us = "BX3M8L83BBRW", xbox-br = "BX3M8L83BBRW" }
 
 [[products]]
 slug = "baldurs-gate-3"
 name = "Baldur's Gate 3"
 category = "Games"
-offers = { steam-br = "1086940", steam-us = "1086940" }
+offers = { steam-br = "1086940", steam-us = "1086940" , xbox-us = "9ND58LQTG09T", xbox-br = "9ND58LQTG09T" }
 
 [[products]]
 slug = "hades-ii"
 name = "Hades II"
 category = "Games"
-offers = { steam-br = "1145350", steam-us = "1145350" }
+offers = { steam-br = "1145350", steam-us = "1145350" , xbox-us = "9PCR3Z2MSM4T", xbox-br = "9PCR3Z2MSM4T" }
 
 [[products]]
 slug = "stardew-valley"
 name = "Stardew Valley"
 category = "Games"
-offers = { steam-br = "413150", steam-us = "413150" }
+offers = { steam-br = "413150", steam-us = "413150" , xbox-us = "C3D891Z6TNQM", xbox-br = "C3D891Z6TNQM" }
 
 [[products]]
 slug = "hollow-knight-silksong"
 name = "Hollow Knight: Silksong"
 category = "Games"
-offers = { steam-br = "1030300", steam-us = "1030300" }
+offers = { steam-br = "1030300", steam-us = "1030300" , xbox-us = "9N116V0599HB", xbox-br = "9N116V0599HB" }
 
 [[products]]
 slug = "red-dead-redemption-2"
 name = "Red Dead Redemption 2"
 category = "Games"
-offers = { steam-br = "1174180", steam-us = "1174180" }
+offers = { steam-br = "1174180", steam-us = "1174180" , xbox-us = "9N2ZDN7NWQKV", xbox-br = "9N2ZDN7NWQKV" }
 
 [[products]]
 slug = "the-witcher-3"
 name = "The Witcher 3: Wild Hunt"
 category = "Games"
-offers = { steam-br = "292030", steam-us = "292030" }
+offers = { steam-br = "292030", steam-us = "292030" , xbox-us = "C261457LCNMJ", xbox-br = "C261457LCNMJ" }
 
 [[products]]
 slug = "black-myth-wukong"
 name = "Black Myth: Wukong"
 category = "Games"
-offers = { steam-br = "2358720", steam-us = "2358720" }
+offers = { steam-br = "2358720", steam-us = "2358720" , xbox-us = "9NWQ1Q1FR0C9", xbox-br = "9NWQ1Q1FR0C9" }
 
 [[products]]
 slug = "sea-of-stars"
 name = "Sea of Stars"
 category = "Games"
-offers = { steam-br = "1244090", steam-us = "1244090" }
+offers = { steam-br = "1244090", steam-us = "1244090" , xbox-us = "9NLLTTJZH40L", xbox-br = "9NLLTTJZH40L" }
 
-# Game merchandise, read from the store's product pages (schema.org microdata).
-
-[[products]]
-slug = "hollow-knight-plush"
-name = "Hollow Knight Plush"
-category = "Merch"
-offers = { fangamer = "hollow-knight-plush" }
+# Console-only pre-order: tracked on the Xbox Store until it reaches PC.
 
 [[products]]
-slug = "undertale-toriel-plush"
-name = "Undertale Toriel Plush"
-category = "Merch"
-offers = { fangamer = "undertale-toriel-plush" }
+slug = "grand-theft-auto-vi"
+name = "Grand Theft Auto VI"
+category = "Games"
+offers = { xbox-us = "9P3H4968GRSM", xbox-br = "9P3H4968GRSM" }
+
+# Boards and handhelds, read from the stores' product pages (schema.org data).
 
 [[products]]
-slug = "stardew-valley-guidebook"
-name = "Stardew Valley Guidebook"
-category = "Merch"
-offers = { fangamer = "stardew-valley-guidebook" }
-
-[[products]]
-slug = "hollow-knight-shirt"
-name = "Hollow Knight Shirt"
-category = "Merch"
-offers = { fangamer = "hollow-knight-shirt" }
-
-# Controllers and keyboards, read from the store's Atom product feed.
-
-[[products]]
-slug = "8bitdo-ultimate-3e-xbox"
-name = "8BitDo Ultimate 3E Controller for Xbox"
+slug = "raspberry-pi-5-8gb"
+name = "Raspberry Pi 5 (8 GB)"
 category = "Hardware"
-offers = { 8bitdo = "9034781687985" }
+offers = { adafruit = "5813", sparkfun = "raspberry-pi-5-8gb" }
 
 [[products]]
-slug = "8bitdo-ultimate-2-clear-blue"
-name = "8BitDo Ultimate 2 Wireless Controller (Clear Blue)"
+slug = "raspberry-pi-pico-2-w"
+name = "Raspberry Pi Pico 2 W"
 category = "Hardware"
-offers = { 8bitdo = "9050537197745" }
+offers = { adafruit = "6087", sparkfun = "raspberry-pi-pico-2-w" }
 
 [[products]]
-slug = "8bitdo-arcade-stick-purple"
-name = "8BitDo Arcade Stick (Purple)"
+slug = "adafruit-pybadge"
+name = "Adafruit PyBadge for MakeCode Arcade"
 category = "Hardware"
-offers = { 8bitdo = "9050537623729" }
+offers = { adafruit = "4200" }
 
 [[products]]
-slug = "8bitdo-retro-87-clear-blue"
-name = "8BitDo Retro 87 Keyboard (Clear Blue)"
+slug = "adafruit-feather-rp2040"
+name = "Adafruit Feather RP2040"
 category = "Hardware"
-offers = { 8bitdo = "9050537427121" }
+offers = { adafruit = "4884" }
 
 [[products]]
-slug = "8bitdo-64-wireless-controller"
-name = "8BitDo 64 2.4G Wireless Controller (Classic Grey)"
+slug = "sparkfun-pro-micro-rp2040"
+name = "SparkFun Pro Micro RP2040"
 category = "Hardware"
-offers = { 8bitdo = "8991980650673" }
+offers = { sparkfun = "sparkfun-pro-micro-rp2040" }

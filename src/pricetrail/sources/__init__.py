@@ -12,6 +12,7 @@ from pricetrail.sources.feed import AtomFeedSource
 from pricetrail.sources.html import ProductPageSource
 from pricetrail.sources.mercadolivre import MercadoLivreSource
 from pricetrail.sources.steam import SteamSource
+from pricetrail.sources.xbox import XboxSource
 
 __all__ = ["KNOWN_SOURCES", "Observation", "Offer", "Source", "SourceInfo", "build_sources"]
 
@@ -26,6 +27,7 @@ class SourceInfo:
     homepage: str
     currency: str
     offer_url: str  # template with {id} for the external id
+    pause: float | None = None  # seconds between requests, when the store asks for more
 
 
 # Every source the catalog may reference, whether or not it can run right now.
@@ -55,24 +57,43 @@ KNOWN_SOURCES = (
         "https://produto.mercadolivre.com.br/{id}",
     ),
     SourceInfo(
-        "fangamer",
-        "Fangamer",
+        "xbox-us",
+        "Xbox Store (US)",
         "html",
-        "https://www.fangamer.com",
+        "https://www.xbox.com",
         "USD",
-        "https://www.fangamer.com/products/{id}",
+        "https://www.xbox.com/en-US/games/store/p/{id}",
     ),
     SourceInfo(
-        "8bitdo",
-        "8BitDo",
-        "feed",
-        "https://shop.8bitdo.com",
+        "xbox-br",
+        "Xbox Store (Brazil)",
+        "html",
+        "https://www.xbox.com",
+        "BRL",
+        "https://www.xbox.com/pt-BR/games/store/p/{id}",
+    ),
+    SourceInfo(
+        "adafruit",
+        "Adafruit",
+        "html",
+        "https://www.adafruit.com",
         "USD",
-        "https://shop.8bitdo.com/products/{id}",
+        "https://www.adafruit.com/product/{id}",
+    ),
+    SourceInfo(
+        "sparkfun",
+        "SparkFun",
+        "html",
+        "https://www.sparkfun.com",
+        "USD",
+        "https://www.sparkfun.com/{id}.html",
+        pause=10.0,  # robots.txt asks for Crawl-delay: 10
     ),
 )
 
-FEED_URLS = {"8bitdo": "https://shop.8bitdo.com/collections/all.atom"}
+# Atom feeds by source id, for stores read through `AtomFeedSource`. No current
+# source uses one: the two Shopify stores answer 429 to GitHub's runners.
+FEED_URLS: dict[str, str] = {}
 
 
 def build_sources(client: Client) -> dict[str, Source]:
@@ -92,6 +113,10 @@ def build_sources(client: Client) -> dict[str, Source]:
                 client=client,
             )
             sources[source.id] = source
+        elif info.id.startswith("xbox-"):
+            sources[info.id] = XboxSource(
+                id=info.id, name=info.name, currency=info.currency, client=client
+            )
         elif info.kind == "html":
             sources[info.id] = ProductPageSource(
                 id=info.id,
@@ -99,6 +124,7 @@ def build_sources(client: Client) -> dict[str, Source]:
                 homepage=info.homepage,
                 currency=info.currency,
                 client=client,
+                pause=info.pause,
             )
         elif info.kind == "feed":
             sources[info.id] = AtomFeedSource(
